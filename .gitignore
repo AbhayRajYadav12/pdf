@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.local
+.env.*.local
+data/
+*.log
+.DS_Store
+__pycache__/
+.venv/
+*.pyc
+ml/checkpoints/
+ml/experiments/*.json
+apps/web/dist/
+.eslintcache
+*.tsbuildinfo

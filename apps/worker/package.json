@@ -1,0 +1,25 @@
+{
+  "name": "@pdf-summary/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx --conditions=development src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@pdf-summary/database": "workspace:*",
+    "@pdf-summary/document-processing": "workspace:*",
+    "@pdf-summary/embeddings": "workspace:*",
+    "@pdf-summary/retrieval": "workspace:*",
+    "@pdf-summary/shared": "workspace:*",
+    "bullmq": "^6.4.0",
+    "ioredis": "^6.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

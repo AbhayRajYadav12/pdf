@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+data
+coverage
+**/.env
+**/.env.local
+ml/experiments
+ml/checkpoints
+apps/web/dist
+*.tsbuildinfo

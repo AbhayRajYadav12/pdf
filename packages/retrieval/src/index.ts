@@ -1,0 +1,11 @@
+export { buildAccessFilter, matchesScope } from "./filter.js";
+export { applyRelevanceGate } from "./gate.js";
+export { MemoryVectorStore, lexicalOverlapScore } from "./memory.js";
+export { QdrantVectorStore } from "./qdrant.js";
+export { reciprocalRankFusion, RRF_K } from "./rrf.js";
+export { createBgeReranker, createLexicalReranker, createNoopReranker } from "./rerank.js";
+export { retrieve } from "./retrieve.js";
+export { fnv1a, sparseDot, sparseVector, tokenize } from "./text.js";
+export type { AccessScope, ChunkPayload, DocumentScope, FusedHit, SearchHit, SparseVector, VectorPoint, VectorStore } from "./types.js";
+export type { Reranker, RerankResult } from "./rerank.js";
+export type { RetrieveInput, RetrieveOutput } from "./retrieve.js";

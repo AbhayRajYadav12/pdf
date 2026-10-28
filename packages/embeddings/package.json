@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@google/genai": "^2.31.0",
+    "@pdf-summary/retrieval": "workspace:*",
     "@pdf-summary/shared": "workspace:*"
   },
   "devDependencies": {

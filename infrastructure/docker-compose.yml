@@ -1,0 +1,96 @@
+services:
+  mongo:
+    image: mongo:7
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo:/data/db
+  redis:
+    image: redis:7.4
+    ports:
+      - "127.0.0.1:6379:6379"
+  qdrant:
+    image: qdrant/qdrant:v1.15.4
+    ports:
+      - "127.0.0.1:6333:6333"
+    volumes:
+      - qdrant:/qdrant/storage
+  api:
+    build:
+      context: ..
+      dockerfile: infrastructure/Dockerfile.api
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      NODE_ENV: production
+      APP_ORIGIN: http://localhost:8080
+      API_PORT: "4000"
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET to 32 or more characters}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      BETTER_AUTH_URL: http://localhost:8080
+      MONGODB_URI: mongodb://mongo:27017/pdf_summary
+      REDIS_URL: redis://redis:6379
+      QDRANT_URL: http://qdrant:6333
+      STORAGE_DIR: /data/documents
+      INGESTION_MODE: queue
+      RATE_LIMIT_STORE: redis
+      TRUST_PROXY: "true"
+      EMBEDDING_PROVIDER: gemini
+      GENERATION_PROVIDER: gemini
+      RERANKER_PROVIDER: ${RERANKER_PROVIDER:-none}
+      RERANKER_URL: http://reranker:8088
+    volumes:
+      - files:/data/documents
+    depends_on:
+      - mongo
+      - redis
+      - qdrant
+    ports:
+      - "127.0.0.1:4000:4000"
+  worker:
+    build:
+      context: ..
+      dockerfile: infrastructure/Dockerfile.worker
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      NODE_ENV: production
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET to 32 or more characters}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      MONGODB_URI: mongodb://mongo:27017/pdf_summary
+      REDIS_URL: redis://redis:6379
+      QDRANT_URL: http://qdrant:6333
+      STORAGE_DIR: /data/documents
+      INGESTION_MODE: queue
+      EMBEDDING_PROVIDER: gemini
+      RERANKER_PROVIDER: none
+    volumes:
+      - files:/data/documents
+    depends_on:
+      - mongo
+      - redis
+      - qdrant
+  web:
+    build:
+      context: ..
+      dockerfile: infrastructure/Dockerfile.web
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      - api
+  reranker:
+    profiles: ["reranker"]
+    build:
+      context: ..
+      dockerfile: infrastructure/Dockerfile.reranker
+    environment:
+      RERANKER_MODEL: BAAI/bge-reranker-v2-m3
+    ports:
+      - "127.0.0.1:8088:8088"
+
+volumes:
+  mongo:
+  qdrant:
+  files:

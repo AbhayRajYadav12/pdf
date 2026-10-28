@@ -16,11 +16,19 @@
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:e2e": "vitest run tests/e2e",
-    "eval": "tsx packages/evaluation/src/cli.ts",
-    "perf": "tsx tests/performance/retrieval.bench.ts"
+    "eval": "tsx --conditions=development packages/evaluation/src/cli.ts",
+    "perf": "tsx --conditions=development tests/performance/retrieval.bench.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@pdf-summary/api": "workspace:*",
+    "@pdf-summary/database": "workspace:*",
+    "@pdf-summary/document-processing": "workspace:*",
+    "@pdf-summary/embeddings": "workspace:*",
+    "@pdf-summary/evaluation": "workspace:*",
+    "@pdf-summary/generation": "workspace:*",
+    "@pdf-summary/retrieval": "workspace:*",
+    "@pdf-summary/shared": "workspace:*",
     "@types/node": "^26.6.5",
     "@types/supertest": "^7.2.1",
     "eslint": "^10.13.0",
@@ -32,5 +40,8 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.72.0",
     "vitest": "^5.0.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["mongodb-memory-server", "@napi-rs/canvas"]
   }
 }

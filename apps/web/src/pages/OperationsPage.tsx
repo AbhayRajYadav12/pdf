@@ -45,11 +45,11 @@ export function OperationsPage() {
   return (
     <div>
       <h1 className="text-2xl font-semibold">Operations</h1>
-      <p className="mt-1 text-sm text-muted">Counts come from stored workspace records. They are not a benchmark.</p>
+      <p className="mt-1 text-sm text-muted">Counts saved for this workspace.</p>
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        <Card label="Stored PDF bytes" value={bytes(ops.storageBytes)} />
-        <Card label="Failed jobs" value={String(ops.failedJobs)} />
-        <Card label="Citation checks that failed" value={String(ops.usage.citationValidationFailures)} />
+        <Card label="Stored documents" value={bytes(ops.storageBytes)} />
+        <Card label="Failed processing" value={String(ops.failedJobs)} />
+        <Card label="Rejected citations" value={String(ops.usage.citationValidationFailures)} />
       </div>
       <section className="mt-6 rounded-xl border border-line bg-white p-4">
         <h2 className="font-semibold">Documents by status</h2>
@@ -65,19 +65,19 @@ export function OperationsPage() {
         </ul>
       </section>
       <section className="mt-6 grid gap-3 sm:grid-cols-3">
-        <Card label="Embedding calls" value={String(ops.usage.embeddingCalls)} />
-        <Card label="Generation calls" value={String(ops.usage.generationCalls)} />
-        <Card label="Rerank calls" value={String(ops.usage.rerankCalls)} />
+        <Card label="Indexing requests" value={String(ops.usage.embeddingCalls)} />
+        <Card label="Answers and summaries" value={String(ops.usage.generationCalls)} />
+        <Card label="Reordering requests" value={String(ops.usage.rerankCalls)} />
       </section>
       <p className="mt-3 text-sm text-muted">
-        Average embedding latency {formatLatency(ops.usage.embeddingLatencyMsAvg)}. Average generation latency {formatLatency(ops.usage.generationLatencyMsAvg)}.
+        Average indexing time {formatLatency(ops.usage.embeddingLatencyMsAvg)}. Average answer time {formatLatency(ops.usage.generationLatencyMsAvg)}.
       </p>
       <section className="mt-6 rounded-xl border border-line bg-white p-4">
         <h2 className="font-semibold">Recent activity</h2>
-        {ops.activity.length === 0 ? <p className="mt-2 text-sm text-muted">No audit events yet.</p> : null}
+        {ops.activity.length === 0 ? <p className="mt-2 text-sm text-muted">No activity yet.</p> : null}
         <ul className="mt-2 space-y-2 text-sm">
           {ops.activity.map((event) => (
-            <li key={`${event.action}-${event.createdAt}`}>{event.action} · {when(event.createdAt)}</li>
+            <li key={`${event.action}-${event.createdAt}`}>{actionLabel(event.action)} · {when(event.createdAt)}</li>
           ))}
         </ul>
       </section>
@@ -91,4 +91,21 @@ function Card({ label, value }: { label: string; value: string }) {
 
 function formatLatency(value: number | null): string {
   return value === null ? "has not been recorded" : `${Math.round(value)} ms`;
+}
+
+function actionLabel(action: string): string {
+  const labels: Record<string, string> = {
+    "auth.register": "Account created",
+    "auth.login": "Signed in",
+    "auth.logout": "Signed out",
+    "document.upload": "Document uploaded",
+    "document.retry": "Processing retried",
+    "document.reprocess": "Document queued again",
+    "document.delete": "Document deleted",
+    "conversation.delete": "Conversation deleted",
+    "workspace.create": "Workspace created",
+    "member.add": "Member added",
+    "member.remove": "Member removed",
+  };
+  return labels[action] ?? action;
 }

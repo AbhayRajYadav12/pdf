@@ -97,9 +97,9 @@ export function LibraryPage() {
             <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
               <Detail label="Status" value={selected.status} />
               <Detail label="Progress" value={`${selected.progress.stage} ${selected.progress.percent}%`} />
-              <Detail label="Chunks" value={String(selected.chunkCount)} />
-              <Detail label="OCR pages" value={String(selected.ocrPageCount)} />
-              <Detail label="Version" value={`${selected.readyVersion ?? "—"} ready / ${selected.version} current`} />
+              <Detail label="Indexed sections" value={String(selected.chunkCount)} />
+              <Detail label="Scanned pages" value={String(selected.ocrPageCount)} />
+              <Detail label="Version" value={selected.readyVersion ? `Ready version ${selected.readyVersion}` : "Not ready yet"} />
             </dl>
             {selected.error ? <p className="mt-3 text-sm text-red-700">{selected.error}</p> : null}
             <div className="mt-5 flex flex-wrap gap-2">

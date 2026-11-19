@@ -1,5 +1,7 @@
 # Deployment
 
+For a single always-on virtual machine with automatic HTTPS and no extra hosting bill, follow [FREE_DEPLOY.md](FREE_DEPLOY.md). That profile adds Caddy, removes published database ports, and keeps PDF files on the local volume. It does not replace the local Compose file.
+
 Development binds MongoDB, Redis, and Qdrant to `127.0.0.1` in Compose so they are not published on other interfaces. The API and web ports are also bound to localhost.
 
 ```bash
@@ -8,7 +10,7 @@ export GEMINI_API_KEY="your-key"
 docker compose up --build
 ```
 
-Open `http://localhost:8080`. Nginx proxies `/api` and disables proxy buffering so server-sent events flush. `TRUST_PROXY=true` in that stack because the API sees nginx.
+Open `http://localhost:8080`. Nginx proxies `/api` and disables proxy buffering so server-sent events flush. `TRUST_PROXY=true` in that stack because the API sees nginx. When Caddy is in front, nginx forwards the `X-Forwarded-Proto` value Caddy sets, and falls back to the local scheme when that header is absent.
 
 The worker and API share the `files` volume at `/data/documents`. That volume is convenient for a single machine. For more than one machine, replace `LocalObjectStore` with a private object store that keeps the same `put`, `open`, and `delete` operations, and do not make the bucket public. Downloads should continue to pass through the membership check.
 

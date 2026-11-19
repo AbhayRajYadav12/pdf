@@ -1,0 +1,85 @@
+# Public single-VM profile. Use with the base file, from the repository root:
+#   docker compose --project-directory . -f infrastructure/docker-compose.yml -f infrastructure/docker-compose.public.yml up -d --build
+# Requires Docker Compose 2.24 or newer for the !override tag.
+# --project-directory . keeps the project name and .env lookup at the repository root.
+
+services:
+  mongo:
+    restart: unless-stopped
+    mem_limit: 1g
+    memswap_limit: 1g
+    ports: !override []
+    networks: !override
+      - private
+  redis:
+    restart: unless-stopped
+    mem_limit: 256m
+    memswap_limit: 256m
+    ports: !override []
+    networks: !override
+      - private
+  qdrant:
+    restart: unless-stopped
+    mem_limit: 2g
+    memswap_limit: 2g
+    ports: !override []
+    networks: !override
+      - private
+  api:
+    restart: unless-stopped
+    mem_limit: 1g
+    memswap_limit: 1g
+    ports: !override []
+    networks: !override
+      - private
+      - edge
+    environment:
+      APP_ORIGIN: ${PUBLIC_ORIGIN:?set PUBLIC_ORIGIN to the public https URL, with no path or trailing slash}
+      BETTER_AUTH_URL: ${PUBLIC_ORIGIN:?set PUBLIC_ORIGIN to the public https URL, with no path or trailing slash}
+      INGESTION_CONCURRENCY: "1"
+      RERANKER_PROVIDER: none
+  worker:
+    restart: unless-stopped
+    mem_limit: 1g
+    memswap_limit: 1g
+    networks: !override
+      - private
+      - edge
+    environment:
+      INGESTION_CONCURRENCY: "1"
+      RERANKER_PROVIDER: none
+  web:
+    restart: unless-stopped
+    mem_limit: 256m
+    memswap_limit: 256m
+    ports: !override []
+    networks: !override
+      - private
+      - edge
+  caddy:
+    image: caddy:2.11.9-alpine
+    restart: unless-stopped
+    mem_limit: 128m
+    memswap_limit: 128m
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:?set PUBLIC_ORIGIN to the public https URL, with no path or trailing slash}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - edge
+    depends_on:
+      - web
+
+networks:
+  private:
+    internal: true
+  edge: {}
+
+volumes:
+  caddy_data:
+  caddy_config:

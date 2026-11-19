@@ -219,7 +219,7 @@ Container images and nginx are under `infrastructure/`. From a configured enviro
 docker compose up --build
 ```
 
-The composed browser and API are served at `http://localhost:8080`. `BETTER_AUTH_SECRET` must be set in the environment. PDF bytes in that stack use a local volume, which is not a multi-machine object store. Deployment limits are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+The composed browser and API are served at `http://localhost:8080`. `BETTER_AUTH_SECRET` must be set in the environment. PDF bytes in that stack use a local volume, which is not a multi-machine object store. Deployment limits are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). A free single-VM deployment with HTTPS is in [docs/FREE_DEPLOY.md](docs/FREE_DEPLOY.md).
 
 ## Troubleshooting
 

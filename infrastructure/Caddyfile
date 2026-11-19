@@ -1,0 +1,15 @@
+# PUBLIC_ORIGIN is the full site URL, for example https://pdf.example.com.
+# Caddy obtains a certificate for that host and redirects port 80 to HTTPS.
+# flush_interval -1 sends each response chunk immediately so chat streams are not buffered.
+{$PUBLIC_ORIGIN} {
+	reverse_proxy web:80 {
+		flush_interval -1
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+		transport http {
+			read_timeout 1h
+			write_timeout 1h
+			response_header_timeout 1h
+		}
+	}
+}

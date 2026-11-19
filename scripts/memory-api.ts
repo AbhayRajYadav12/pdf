@@ -8,14 +8,15 @@ import { createApp } from "../apps/api/src/app.js";
 import { createContext } from "../apps/api/src/context.js";
 
 const logger = createLogger("memory-api");
+const apiPort = process.env.API_PORT ?? "4000";
 const mongo = await MongoMemoryServer.create();
 const storage = await mkdtemp(path.join(os.tmpdir(), "pdf-summary-demo-"));
 const env = loadEnv({
   NODE_ENV: "development",
   APP_ORIGIN: process.env.DEMO_ORIGIN ?? "http://localhost:5173",
-  API_PORT: "4000",
+  API_PORT: apiPort,
   BETTER_AUTH_SECRET: "local-demo-secret-that-is-at-least-32",
-  BETTER_AUTH_URL: "http://localhost:4000",
+  BETTER_AUTH_URL: process.env.BETTER_AUTH_URL ?? `http://localhost:${apiPort}`,
   MONGODB_URI: mongo.getUri(),
   REDIS_URL: "redis://127.0.0.1:6399",
   QDRANT_URL: "memory",
